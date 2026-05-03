@@ -1,0 +1,11 @@
+# Archivos
+*.exe
+*.o
+*.obj
+
+# Directorios
+.vscode/
+.vs/
+out/
+build/
+output/
