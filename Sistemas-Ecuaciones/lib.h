@@ -102,11 +102,15 @@ class Method
         void EpiCheck()
         {
             double sum;
-            for (int i = 0; i<m_size; i++)
+            for (int a = 0; a < m_size; a++)
             {
-                sum += solution[i]*getM()->getElement(0, i);
-            }  
-            std:: cout << "La sumita dio (funciona, pls): "<< sum;
+                sum = 0;
+                for (int i = 0; i<m_size; i++)
+                {
+                sum += solution[i]*getM()->getElement(a, i);
+                }  
+            std:: cout << "La sumita dio (funciona, pls): "<< sum << std :: endl;
+            }
         }    
         
 };
@@ -127,7 +131,9 @@ class GaussianElimination : public Method
         }
 
         GaussianElimination(Matrix *A) : Method(A)
-        {}
+        {
+            modifiers = new double[(get_m_size()*(get_m_size()))/2];
+        }
         
         bool ForwardElimination();
         void BackwardsSubstitution();
@@ -139,7 +145,9 @@ class GaussianElimination : public Method
 
         void Solve() override
         {
+            std :: cout << "eliminando";
             ForwardElimination();
+
             BackwardsSubstitution();
             print_solutions();
             EpiCheck();
@@ -344,7 +352,7 @@ bool GaussianElimination :: ForwardElimination() //return false si encuentra fil
                 
                 getM()->setElement(i, j, mod);
 
-               
+                std :: cout << "m" << i  <<", "<< j <<" = " << mult << std :: endl;
                 
                 
             }
@@ -356,6 +364,7 @@ bool GaussianElimination :: ForwardElimination() //return false si encuentra fil
             }
 
         }
+
     }
 
 
@@ -371,6 +380,7 @@ bool GaussianElimination :: ForwardElimination() //return false si encuentra fil
         }
     }
     return false;
+
 
 }
 
@@ -429,7 +439,7 @@ double Gauss_Seidel :: get_sum_i(int i)
             sum += getM()->getElement(i, j) * get_sol(j);
         }
         
-        std :: cout << "sumatoria de fila: " << j << sum; 
+        std :: cout << "sumatoria de fila: " << i << sum << std :: endl; 
     }
     return sum;
 }
@@ -473,6 +483,7 @@ void Gauss_Seidel :: Iterate_Error()
 
 bool Gauss_Seidel :: Is_Diagonally_Dom()
 {
+    bool *swapped = new bool[get_m_size()]; 
     
     for (int i = 0; i<get_m_size(); i++)
     {
@@ -489,13 +500,12 @@ bool Gauss_Seidel :: Is_Diagonally_Dom()
                 
             }
             
-            if (abs(getM()->getElement(i,j)) > abs(sum))
+            if (abs(getM()->getElement(i,j)) <= abs(sum))
             {
                 if (dominant_var[j] == -1)
                 {
                     dominant_var[j] = i;
                     std:: cout << "Dominante en fila"<< i << " es la columna : " << j << std :: endl;
-                    getM()->swap_rows(j, i);
                 }
 
                 else
@@ -504,17 +514,30 @@ bool Gauss_Seidel :: Is_Diagonally_Dom()
                 }
             }
         }
-        if (dominant_var[i] == -1)
+     
+
+    }
+
+     for (int a = 0; a<get_m_size(); a++)
+    {
+        if (dominant_var[0] == -1)
         {
             return false;
         }
 
     }
 
-    std :: cout << "Bueno..." << std :: endl;
+    std :: cout << "Veredicto: Matriz diagonalmente dominante." << std :: endl;
     for (int a = 0; a<get_m_size(); a++)
     {
-        getM()->swap_rows(a, dominant_var[a]);
+        if(swapped[a] == 0 && swapped[dominant_var[a] == 0])
+        {
+            getM()->swap_rows(a, dominant_var[a]);
+        }
+        swapped[a] = 1;
+        swapped[dominant_var[a]] = 1;
+        
+
     }
     return true;
 }
