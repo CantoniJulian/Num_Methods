@@ -500,7 +500,7 @@ bool Gauss_Seidel :: Is_Diagonally_Dom()
                 
             }
             
-            if (abs(getM()->getElement(i,j)) <= abs(sum))
+            if (abs(getM()->getElement(i,j)) > abs(sum))
             {
                 if (dominant_var[j] == -1)
                 {
@@ -526,19 +526,42 @@ bool Gauss_Seidel :: Is_Diagonally_Dom()
         }
 
     }
-
+ // Parte con Gemini para Swapeo porque no tengo tiempo :(
     std :: cout << "Veredicto: Matriz diagonalmente dominante." << std :: endl;
-    for (int a = 0; a<get_m_size(); a++)
-    {
-        if(swapped[a] == 0 && swapped[dominant_var[a] == 0])
-        {
-            getM()->swap_rows(a, dominant_var[a]);
-        }
-        swapped[a] = 1;
-        swapped[dominant_var[a]] = 1;
+   for (int i = 0; i < get_m_size(); i++) {
         
+        // 1. Miramos la fila que está actualmente en la posición 'i'
+        // ¿Es estricamemente dominante para la columna 'i'?
+        double sum_actual = 0;
+        for (int k = 0; k < get_m_size(); k++) {
+            if (k != i) {
+                sum_actual += abs(getM()->getElement(i, k));
+            }
+        }
 
+        // 2. Si NO es dominante, buscamos a su reemplazo más abajo
+        if (abs(getM()->getElement(i, i)) <= sum_actual) {
+            
+            // Empezamos a buscar desde la fila de abajo (i + 1) hasta el final
+            for (int j = i + 1; j < get_m_size(); j++) {
+                
+                // Calculamos si esta fila 'j' sería dominante si la pusiéramos en 'i'
+                double sum_candidato = 0;
+                for (int k = 0; k < get_m_size(); k++) {
+                    if (k != i) {
+                        sum_candidato += abs(getM()->getElement(j, k));
+                    }
+                }
+
+                // Si encontramos a la fila dominante para esta columna, ¡la subimos!
+                if (abs(getM()->getElement(j, i)) > sum_candidato) {
+                    getM()->swap_rows(i, j);
+                    break; // Ya arreglamos esta diagonal, cortamos la búsqueda
+                }
+            }
+        }
     }
+        
     return true;
 }
 
