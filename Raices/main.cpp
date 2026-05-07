@@ -158,7 +158,7 @@ int main()
 {
     std::cout << nr_wrap(200) << std:: endl;
     std:: cout << secant_wrap(20,2000) << std:: endl;
-    // std:: cout << fixedpoint_wrap(200) << std:: endl;
+    std:: cout << fixedpoint_wrap(200) << std:: endl;
     std:: cout <<  bisec_wrap(0, 200) << std:: endl;
     
 

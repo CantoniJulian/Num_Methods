@@ -53,6 +53,7 @@ class Method
             }
 
         }
+        
 
         Method(Matrix *A)
         {
@@ -112,14 +113,24 @@ class Method
 
 class GaussianElimination : public Method
 {
-    public: 
+    private:
+        double *modifiers;
+    public:
         GaussianElimination()
         {
-
+            modifiers = new double[(get_m_size()*(get_m_size()))/2];
         }
+
+        double get_modifiers(int i)
+        {
+            return modifiers[i];
+        }
+
+        GaussianElimination(Matrix *A) : Method(A)
+        {}
         
         bool ForwardElimination();
-        void BackwwardsSubstitution();
+        void BackwardsSubstitution();
         double getMultiplier(int i, int j);
 
 
@@ -129,7 +140,7 @@ class GaussianElimination : public Method
         void Solve() override
         {
             ForwardElimination();
-            BackwwardsSubstitution();
+            BackwardsSubstitution();
             print_solutions();
             EpiCheck();
         };
@@ -196,6 +207,63 @@ class Gauss_Seidel : public Method
 
 };
 
+class LU : public Method
+{
+    private:
+        Matrix *L, *U;
+        GaussianElimination Elim = GaussianElimination(getM());
+        double *y_i;
+
+    public:
+        LU()
+        {
+        }
+        void generateL();
+        LU(Matrix *A) : Method(A)
+        {
+            y_i = new double[get_m_size()];
+            for (int i = 0; i<get_m_size(); i++)
+            {
+                y_i[i] = 0;
+            }
+            std :: cout << "oal" << std :: endl;
+            L = new Matrix(get_m_size());
+            U = new Matrix(get_m_size());
+            
+            for (int j = 0; j<get_m_size(); j++)
+            {
+        
+                get_L()->setElement(j, get_m_size(), getM()->getElement(j, get_m_size()));
+                y_i[j] = 0;
+            }
+         
+            
+        }
+
+        void Solve() override
+        {
+            
+            Elim.ForwardElimination();
+            generateL();
+            U = Elim.getM();
+            U->print_matrix();
+            L->print_matrix();
+            ForwardSubstitution();
+            Elim.Solve();
+
+        }
+        Matrix *get_U()
+        {
+            return U;
+        }
+        Matrix *get_L()
+        {
+            return L;
+        }
+
+        void ForwardSubstitution();
+};
+
 // implementacion de Matriz :3
 Matrix :: Matrix(int n) : size_m(n)
 {
@@ -206,7 +274,7 @@ Matrix :: Matrix(int n) : size_m(n)
         mtrx[i] = new double[n+1];
         for (int j = 0; j < (n+1); j++)
         {
-            mtrx[i][j]= rand() % 10 + 1;
+            mtrx[i][j]= 0;//rand() % 10 + 1;
 
         }
 
@@ -217,6 +285,7 @@ Matrix :: Matrix(int n) : size_m(n)
 
 void Matrix :: print_matrix()
 {
+    std:: cout << "imprimiendo" << size_m << std :: endl;
    for (int i = 0; i < size_m; i++)
    {
     std::cout << "| ";
@@ -260,9 +329,9 @@ void Matrix :: swap_rows(int a, int b)
 
 // implementación de pene en el orto, digo Eliminación-Gausseana :3
 
-bool GaussianElimination :: ForwardElimination() //return false si encuentra fila nula???
+bool GaussianElimination :: ForwardElimination() //return false si encuentra fila nula??? Yes, papu :v
 {
-    
+    int mod_count = 0;
     for (int a = 0; a<(get_m_size()); a++) 
     {
         for (int i = a+1; i < get_m_size(); i++)
@@ -270,11 +339,22 @@ bool GaussianElimination :: ForwardElimination() //return false si encuentra fil
             double mult = getMultiplier(i,a);   
             for (int j = 0; j < get_m_size()+1; j++)
             {
+
                 double mod = getM()->getElement(i,j) - (mult * getM()->getElement(a,j));
-                //Salida insana que me decía todo :3//std:: cout << "Mod de "<< i << "," << j <<": " << mod << " Elemento de la fila de arriba: " << a << ","<< j << std::endl;
+                
                 getM()->setElement(i, j, mod);
 
+               
+                
+                
             }
+
+             if (i > a)
+            {
+                    modifiers[mod_count] = mult;
+                    mod_count++;
+            }
+
         }
     }
 
@@ -305,7 +385,7 @@ void a()
     std:: cout << "hola";
 }
 
-void GaussianElimination :: BackwwardsSubstitution()
+void GaussianElimination :: BackwardsSubstitution()
 {
     double x_i = 0;
     for (int i = get_m_size()-1; i >= 0; i--)
@@ -317,7 +397,6 @@ void GaussianElimination :: BackwwardsSubstitution()
             sum += getM()->getElement(i, j) * get_sol(j);
             
         }
-        std:: cout << "oal"<< sum << std:: endl;
         
         x_i = (getM()->getElement(i, get_m_size()) - sum) / (getM()->getElement(i, i));
         set_solution(x_i, i);
@@ -343,14 +422,14 @@ void Gauss_Seidel :: Iterate_solutions()
 double Gauss_Seidel :: get_sum_i(int i)
 {
     double sum = 0;
-    for (int j = 0; j < get_m_size(); j++) // NO PONGAS -1 EN LOS FOR porque la condición dice meno, pajero del orto
+    for (int j = 0; j < get_m_size(); j++) // NO HAY QUE PONER -1 EN LOS FOR porque la condición dice meno, pajero del orto
     {
         if (j != i)
         {
             sum += getM()->getElement(i, j) * get_sol(j);
         }
         
-        std :: cout << "sum: " << sum; 
+        std :: cout << "sumatoria de fila: " << j << sum; 
     }
     return sum;
 }
@@ -440,3 +519,45 @@ bool Gauss_Seidel :: Is_Diagonally_Dom()
     return true;
 }
 
+void LU :: generateL()
+{
+    int mod_count = 0;
+    for (int i = 0; i< get_m_size(); i++)
+    {
+       
+        L->setElement(i, i, 1);
+        for (int j = 0; j < i; j++)
+        {
+            
+            L->setElement(i, j, Elim.get_modifiers(mod_count));
+            mod_count ++;
+        }    
+    }
+
+    
+}
+
+void LU :: ForwardSubstitution()
+{
+ 
+    double y = 0;
+    for (int i = 0; i < get_m_size(); i++)
+    {
+       double sum = 0; // es necesario resetear la suma, boludo. Sino, acumulás la suma en el anterior.
+        for (int j = 0; j < i; j++)
+        {
+            //std:: cout << "i = "<< i << " j = " << j << "sol = " << get_sol(j) << std:: endl;
+            sum += L->getElement(i, j) * y_i[j];
+            
+        }
+        std :: cout << sum;
+        y = (L->getElement(i, get_m_size()) - sum) / (L->getElement(i, i));
+        y_i[i] = y;
+    
+    }
+
+    for (int i = 0; i<get_m_size(); i++)
+    {
+        std:: cout << "y_" <<i <<": "<< y_i[i]<< std:: endl;
+    }
+}
