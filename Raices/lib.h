@@ -37,6 +37,9 @@ class RootMethod
             return it_counter;
         }
 
+        std :: string show_iteration()
+        {
+        }
 };
 
 class Bisec : public RootMethod
@@ -44,6 +47,7 @@ class Bisec : public RootMethod
     public:
         Bisec(){};
         double get_interval(double a, double b);
+        std :: string show_iteration();
 };
 
 class FixedPoint : public RootMethod

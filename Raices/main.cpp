@@ -66,7 +66,7 @@ double Bisec :: get_interval(double a, double b)
     //caso base
     double curr_error = (b-a)/2;
     double c = (a+b)/2;
-
+    std :: cout << "a = " << a << ", b = " << b << ", c = " << c << "Error actual (b-a)/2: " << curr_error << std :: endl;
     if ((error > curr_error) || (function(a)*function(b) == 0))
     {
         return c;
@@ -80,32 +80,36 @@ double Bisec :: get_interval(double a, double b)
     {
         return (get_interval(a, c));
     }
+
+    
 }
+
+
+
 
 
 // Esto es punto fijo uwu
 
-double FixedPoint :: image(double x){
-    if ( x < init ){
+double FixedPoint :: image(double x){ // despejando 
         return -2.627 / (-0.074*x+1.750);
-    }
-    return init;
+
 }
 
 double FixedPoint :: get_interval(double x){
 
-
-    while(derivative(x) > 1)
+    if (derivative(x) >1)
     {
-       x=abs(x)-1;
+        return 0;
     }
     double value = std::abs(image(x)-x);
+    std :: cout << "x = " << x << ", Imagen en x = " << image(x) <<", Error actual = " << value<< std :: endl;
     if (value<error){
         return x;
         
     } else {
         return get_interval(image(x));
     }
+    
 }
 
 // Esto es Secante :3
@@ -114,6 +118,8 @@ double Secant :: get_interval(double x_i, double x_prev)
 {
     double x_next = x_i - (function(x_i) * (x_i - x_prev)/(function(x_i) - function(x_prev)));
     double value = std:: abs((x_prev-x_i)/x_next); // acá se calcula el error de la iteración :3
+
+    std :: cout << "x_i = " << x_i << ", x_previo = " << x_prev << ", x_calculado = " << x_next << ", Error actual = " << value << std :: endl; // print state :3
      if (value<error)
     {
         return x_next;
@@ -122,6 +128,7 @@ double Secant :: get_interval(double x_i, double x_prev)
     {
         return get_interval(x_next, x_i);
     }
+    
 }
 
 
@@ -140,7 +147,7 @@ double Newton_Raphson :: get_interval(double x_i)
     double x_next = x_i - (function(x_i)/(derivative(x_i)));
     double value = std:: abs((x_next-x_i)/(x_next)); 
 
-    
+    std :: cout << "x_"<< get_iteration() << "= "<< x_i << ", x_calculado = " << x_next <<", Error actual = " << value<< std :: endl;
 
     if (value<error)
     {
@@ -150,16 +157,29 @@ double Newton_Raphson :: get_interval(double x_i)
     {
         return get_interval(x_next);
     }
+    
 }
 
 
 
 int main()
 {
+    
+    std :: cout << "Newthon_Raphson" << std :: endl;
     std::cout << nr_wrap(200) << std:: endl;
+     std :: cout << std :: endl;
+    std :: cout << "Secante" << std :: endl;
+
     std:: cout << secant_wrap(20,2000) << std:: endl;
+     std :: cout << std :: endl;
+    std :: cout << "Punto Fijo" << std :: endl;
+
     std:: cout << fixedpoint_wrap(200) << std:: endl;
-    std:: cout <<  bisec_wrap(0, 200) << std:: endl;
+    std :: cout << std :: endl;
+
+    std :: cout  << "Biseccion" << std :: endl;
+
+    std:: cout << bisec_wrap(0, 200) << std:: endl;
     
 
 }
