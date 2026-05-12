@@ -109,7 +109,7 @@ class Method
                 {
                 sum += solution[i]*getM()->getElement(a, i);
                 }  
-            std:: cout << "La sumita dio (funciona, pls): "<< sum << std :: endl;
+            std:: cout << "La suma reemplazando: "<< sum << std :: endl;
             }
         }    
         
@@ -145,7 +145,7 @@ class GaussianElimination : public Method
 
         void Solve() override
         {
-            std :: cout << "eliminando";
+
             ForwardElimination();
 
             BackwardsSubstitution();
@@ -250,10 +250,18 @@ class LU : public Method
 
         void Solve() override
         {
-            
+            double *b = new double[get_m_size()];
+            for (int i = 0; i<get_m_size(); i++)
+            {
+                b[i] = getM()->getElement(i, get_m_size());
+            }
             Elim.ForwardElimination();
             generateL();
             U = Elim.getM();
+            for (int i = 0; i<get_m_size(); i++)
+            {
+                U->setElement(i, get_m_size(), b[i]);
+            }
             U->print_matrix();
             L->print_matrix();
             ForwardSubstitution();
@@ -335,7 +343,7 @@ void Matrix :: swap_rows(int a, int b)
 }
 
 
-// implementación de pene en el orto, digo Eliminación-Gausseana :3
+// implementación de pene en el orto, digo Eliminación-Gausseana >:3
 
 bool GaussianElimination :: ForwardElimination() //return false si encuentra fila nula??? Yes, papu :v
 {
@@ -439,8 +447,9 @@ double Gauss_Seidel :: get_sum_i(int i)
             sum += getM()->getElement(i, j) * get_sol(j);
         }
         
-        std :: cout << "sumatoria de fila: " << i << sum << std :: endl; 
+         
     }
+    std :: cout << "sumatoria de fila" << i <<"= "<< sum << std :: endl;
     return sum;
 }
 

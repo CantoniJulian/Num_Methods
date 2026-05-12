@@ -5,10 +5,10 @@
 #include "lib.h"
 #define EXPORT __attribute__((visibility("default"))) __attribute__((used))
 
-// Acá están mis wrapeos bien putotes :3
+// Acá están mis wrapeos bien :3
 extern "C"
 {
-    const double error = 0.0000001;
+    const double error = 0.0001;
 
     double derivative_wrap(double x)
     {
@@ -49,12 +49,12 @@ extern "C"
 }
 double Function :: get_func(double x)
 {
-    return -0.074* pow(x, 2) + 1.75 * x + 2.627;
+    return cos(x)/sqrt(exp(1)); // Nota para el profe: este return se cambia con la expresión de la función
 }
 
 double Function :: get_derivative(double x)
 {
-    return (get_func(x+0.0000001)-get_func(x))/0.0000001; // acá fui un verdadero pelotudo, primero porque quise dividir por x (ALTO GILASO)
+    return (get_func(x+0.0000000001)-get_func(x))/0.0000000001; // acá fui un verdadero inepto, primero porque quise dividir por x
 }
 
 
@@ -95,16 +95,18 @@ double FixedPoint :: image(double x){ // despejando
 
 }
 
-double FixedPoint :: get_interval(double x){
-
-    if (derivative(x) >1)
+double FixedPoint :: get_interval(double x)
+{
+    double der_value = (image(x+0.0000001)-image(x))/0.0000001;
+    if (std :: fabs(der_value)>1) // acá después cambio el método de derivada bien épica
     {
+        std :: cout << "|g(x)'| ="<< (image(x+0.0000001)-image(x))/0.0000001 << "> 1" << std :: endl;
         return 0;
     }
     double value = std::abs(image(x)-x);
-    std :: cout << "x = " << x << ", Imagen en x = " << image(x) <<", Error actual = " << value<< std :: endl;
+    std :: cout << "x = " << x << ", Imagen en x = " << image(x) <<", Valor de la g'(x) = "<< der_value <<", Error actual = " << value<< std :: endl;
     if (value<error){
-        return x;
+        return image(x);
         
     } else {
         return get_interval(image(x));
@@ -117,7 +119,7 @@ double FixedPoint :: get_interval(double x){
 double Secant :: get_interval(double x_i, double x_prev)
 {
     double x_next = x_i - (function(x_i) * (x_i - x_prev)/(function(x_i) - function(x_prev)));
-    double value = std:: abs((x_prev-x_i)/x_next); // acá se calcula el error de la iteración :3
+    double value = std:: abs((x_prev-x_i)/x_next); // acá se calcula el error de la iteración bien putona :3
 
     std :: cout << "x_i = " << x_i << ", x_previo = " << x_prev << ", x_calculado = " << x_next << ", Error actual = " << value << std :: endl; // print state :3
      if (value<error)
@@ -147,7 +149,7 @@ double Newton_Raphson :: get_interval(double x_i)
     double x_next = x_i - (function(x_i)/(derivative(x_i)));
     double value = std:: abs((x_next-x_i)/(x_next)); 
 
-    std :: cout << "x_"<< get_iteration() << "= "<< x_i << ", x_calculado = " << x_next <<", Error actual = " << value<< std :: endl;
+    std :: cout << "x_"<< get_iteration() << "= "<< x_i << ", x_calculado = " << x_next << ", Valor de la g'(x) = "<< derivative(x_i) <<", Error actual = " << value<< std :: endl;
 
     if (value<error)
     {
@@ -165,22 +167,21 @@ double Newton_Raphson :: get_interval(double x_i)
 int main()
 {
     
-    std :: cout << "Newthon_Raphson" << std :: endl;
-    std::cout << nr_wrap(200) << std:: endl;
-     std :: cout << std :: endl;
+   std :: cout << "Newthon_Raphson" << std :: endl;
+    std::cout << nr_wrap(2) << std:: endl;
+     /* std :: cout << std :: endl;
     std :: cout << "Secante" << std :: endl;
 
     std:: cout << secant_wrap(20,2000) << std:: endl;
      std :: cout << std :: endl;
-    std :: cout << "Punto Fijo" << std :: endl;
+    std :: cout << "Punto Fijo" << std :: endl; */
 
-    std:: cout << fixedpoint_wrap(200) << std:: endl;
-    std :: cout << std :: endl;
+   /*  std:: cout << fixedpoint_wrap(1) << std:: endl;
+    std :: cout << std :: endl;  */
 
     std :: cout  << "Biseccion" << std :: endl;
 
-    std:: cout << bisec_wrap(0, 200) << std:: endl;
-    
+    std:: cout << bisec_wrap(1, 2) << std:: endl;
 
 }
 

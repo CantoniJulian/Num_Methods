@@ -21,8 +21,14 @@ void GE(Matrix *A)
     G.Solve();
 
     G.getM()->print_matrix();
-}
+};
 
+void LU(Matrix *A)
+{
+    LU Lu = LU(A);
+
+    Lu.Solve();
+}
 
 int main()
 {
@@ -81,7 +87,7 @@ int main()
         GE(A);
         break;
     case 2:
-        GS(A);
+        LU(A);
         break;
     
     default:
