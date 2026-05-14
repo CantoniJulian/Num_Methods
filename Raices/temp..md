@@ -1,4 +1,4 @@
-Bueno, tengo que hacer el N-R.
+Bueno, tengo que hacer el N-R. Listo, pa.
 
 Requisitos:
 

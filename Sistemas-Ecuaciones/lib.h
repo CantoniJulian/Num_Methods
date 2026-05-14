@@ -343,7 +343,7 @@ void Matrix :: swap_rows(int a, int b)
 }
 
 
-// implementación de pene en el orto, digo Eliminación-Gausseana >:3
+// Eliminación-Gausseana >:3
 
 bool GaussianElimination :: ForwardElimination() //return false si encuentra fila nula??? Yes, papu :v
 {
@@ -440,7 +440,7 @@ void Gauss_Seidel :: Iterate_solutions()
 double Gauss_Seidel :: get_sum_i(int i)
 {
     double sum = 0;
-    for (int j = 0; j < get_m_size(); j++) // NO HAY QUE PONER -1 EN LOS FOR porque la condición dice meno, pajero del orto
+    for (int j = 0; j < get_m_size(); j++) // NO HAY QUE PONER -1 EN LOS FOR porque la condición dice menos
     {
         if (j != i)
         {
@@ -491,9 +491,7 @@ void Gauss_Seidel :: Iterate_Error()
 }
 
 bool Gauss_Seidel :: Is_Diagonally_Dom()
-{
-    bool *swapped = new bool[get_m_size()]; 
-    
+{   
     for (int i = 0; i<get_m_size(); i++)
     {
 

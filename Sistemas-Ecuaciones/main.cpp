@@ -2,9 +2,9 @@
 #include <cstdlib>
 
 
- void GS(Matrix *A)
+ void GS(Matrix *C)
     {
-        Gauss_Seidel G2 = Gauss_Seidel(A);
+        Gauss_Seidel G2 = Gauss_Seidel(C);
 
         std :: cout << std :: endl;
         G2.Solve();
@@ -14,36 +14,24 @@
         std:: cout << std:: endl;
     }
 
-void GE(Matrix *A)
+void GE(Matrix *C)
 {
-    GaussianElimination G = GaussianElimination(A);
+    GaussianElimination G = GaussianElimination(C);
     G.getM()-> print_matrix();
     G.Solve();
 
     G.getM()->print_matrix();
 };
 
-void LU(Matrix *A)
+void LUM(Matrix *C)
 {
-    LU Lu = LU(A);
-
+    LU Lu = LU(C);
     Lu.Solve();
+
 }
 
 int main()
 {
-/*     GaussianElimination G;
-    G.getM()-> print_matrix();
-
-
-    std :: cout << std :: endl;
-    G.getM()->print_matrix();
-   
-    std :: cout << std :: endl;
-    std::cout << G.ForwardElimination() << std::endl;
-    G.getM()->print_matrix();
-
-    G.Solve(); */
 
     int contin = 0;
     while(contin != -1)
@@ -78,21 +66,7 @@ int main()
     std :: cout << "Ingrese el metodo: (0 GE, 1GS, 2LU)" << std:: endl;
     std :: cin >> sel;
     std ::  cout << std :: endl;
-    switch (sel)
-    {
-    case 1:
-        GS(A);
-        break;
-    case 0:
-        GE(A);
-        break;
-    case 2:
-        LU(A);
-        break;
-    
-    default:
-        break;
-    }
+   
 
     }
 
